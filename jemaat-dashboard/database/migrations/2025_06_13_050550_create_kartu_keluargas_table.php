@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreignId('rayon_id')->constrained()->onDelete('restrict');
             $table->string('no_kk')->unique();
             $table->string('kepala_keluarga');
+            $table->date('tanggal_pernikahan')->nullable();
 
             // Foreign nullable untuk wilayah
             $table->char('provinsi_id', 2)->nullable();
