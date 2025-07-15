@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="card-value">{{ number_format($totalKartuKeluarga ?? 0) }}</div>
+                <div class="card-value">{{ number_format($totalKepalaKeluarga ?? 0) }}</div>
                 <div class="card-detail">Total kepala keluarga</div>
             </div>
         </div>
@@ -50,7 +50,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <div class="card-value">{{ number_format($majelisCount ?? 0) }}</div>
+                <div class="card-value">{{ number_format($totalMajelis ?? 0) }}</div>
                 <div class="card-detail">Anggota majelis aktif</div>
                 @if($majelisUlangTahunCount ?? 0 > 0)
                     <div class="mt-2 text-info small">
@@ -72,7 +72,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <div class="card-value">{{ number_format($ulangTahunCount) }}</div>
+                <div class="card-value">{{ number_format($ulangTahunBulanIniCount ?? 0) }}</div>
                 <div class="card-detail">Jemaat berulang tahun bulan ini</div>
             </div>
         </div>
