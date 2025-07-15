@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             IndoRegionSeeder::class,
             RayonSeeder::class,
             UserSeeder::class,
+            ManualKartuKeluargaSeeder::class
         ]);
     }
 }
