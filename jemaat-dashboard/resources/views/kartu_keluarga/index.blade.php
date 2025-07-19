@@ -11,13 +11,13 @@
 @section('content')
     {{-- @section('action-buttons') --}}
     <form method="GET" class="row g-2 align-items-end mb-3">
-        <div class="col-md-2">
+        <div class="col-md-2 col-6">
             <label for="search" class="form-label">Pencarian</label>
             <input type="text" name="search" id="search" class="form-control"
                 placeholder="Cari No KK / Kepala Keluarga" value="{{ request('search') }}">
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-2 col-6">
             <label for="rayon_id" class="form-label">Rayon</label>
             <select name="rayon_id" id="rayon_id" class="form-select">
                 <option value="">Semua Rayon</option>
@@ -29,7 +29,7 @@
             </select>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-2 col-6">
             <label for="sort_by" class="form-label">Urut Berdasarkan</label>
             <select name="sort_by" id="sort_by" class="form-select">
                 <option value="">Pilih</option>
@@ -41,7 +41,7 @@
             </select>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-2 col-6">
             <label for="sort_order" class="form-label">Arah Urutan</label>
             <select name="sort_order" id="sort_order" class="form-select">
                 <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Naik (A-Z / Terendah)</option>
@@ -50,11 +50,11 @@
             </select>
         </div>
 
-        <div class="col-md-2 d-grid">
+        <div class="col-md-2 col-6 d-grid">
             <button type="submit" class="btn btn-primary"><i class="bi bi-filter"></i> Tampilkan</button>
         </div>
 
-        <div class="col-md-2 d-grid">
+        <div class="col-md-2 col-6 d-grid">
             <a href="{{ route('kartu-keluarga.index') }}" class="btn btn-secondary"><i class="bi bi-x-circle"></i>
                 Reset</a>
         </div>
