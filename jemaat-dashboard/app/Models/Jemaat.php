@@ -80,6 +80,19 @@ class Jemaat extends Model
         'MENINGGAL' => 'Meninggal',
     ];
 
+    const PENDIDIKAN = [
+        'SD'     => 'SD',
+        'SMP'    => 'SMP',
+        'SMA'    => 'SMA',
+        'SMK'    => 'SMK',
+        'D1'     => 'Diploma I',
+        'D2'     => 'Diploma II',
+        'D3'     => 'Diploma III',
+        'S1'     => 'Sarjana (S1)',
+        'S2'     => 'Magister (S2)',
+        'S3'     => 'Doktor (S3)',
+    ];
+
     // ========================
     // 🔍 Scopes
     // ========================
