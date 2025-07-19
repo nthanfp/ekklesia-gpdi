@@ -14,8 +14,12 @@ class JemaatController extends Controller
     {
         $search = request('search');
         $rayonId = request('rayon_id');
-        $kkId = request('kartu_keluarga_id');
         $statusKk = request('status_kk');
+        $gender = request('gender');
+        $statusPelayanan = request('status_pelayanan');
+        $statusBaptis = request('status_baptis');
+        $statusKawin = request('status_kawin');
+        $pendidikan = request('pendidikan');
         $sortBy = request('sort_by', 'nama');
         $sortOrder = request('sort_order', 'asc');
 
@@ -27,20 +31,27 @@ class JemaatController extends Controller
                     fn($qq) =>
                     $qq->whereRaw("nama ILIKE ?", ["%$search%"])
                         ->orWhereRaw("nik ILIKE ?", ["%$search%"])
-                        ->orWhereRaw("no_anggota ILIKE ?", ["%$search%"])
+                        ->orWhereHas(
+                            'kartuKeluarga',
+                            fn($kk) =>
+                            $kk->whereRaw("no_kk ILIKE ?", ["%$search%"])
+                        )
                 )
             )
             ->when($rayonId, fn($q) => $q->whereHas('kartuKeluarga', fn($qq) => $qq->where('rayon_id', $rayonId)))
-            ->when($kkId, fn($q) => $q->where('kartu_keluarga_id', $kkId))
             ->when($statusKk, fn($q) => $q->where('status_kk', $statusKk))
+            ->when($gender, fn($q) => $q->where('gender', $gender))
+            ->when($statusPelayanan, fn($q) => $q->where('status_pelayanan', $statusPelayanan))
+            ->when($statusBaptis !== null, fn($q) => $q->where('status_baptis', $statusBaptis))
+            ->when($statusKawin, fn($q) => $q->where('status_kawin', $statusKawin))
+            ->when($pendidikan, fn($q) => $q->where('pendidikan', $pendidikan))
             ->orderBy($sortBy, $sortOrder)
             ->paginate(10)
             ->appends(request()->query());
 
         $rayons = Rayon::orderBy('nama')->get();
-        $kartuKeluargas = KartuKeluarga::orderBy('no_kk')->get();
 
-        return view('jemaats.index', compact('jemaats', 'rayons', 'kartuKeluargas'));
+        return view('jemaats.index', compact('jemaats', 'rayons'));
     }
 
 
