@@ -22,7 +22,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <table class="table table-bordered">
+                    <table class="table table-hover">
                         <tr>
                             <th width="30%">No KK</th>
                             <td>{{ $kartuKeluarga->no_kk }}</td>
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <table class="table table-bordered">
+                    <table class="table table-hover">
                         <tr>
                             <th>Kecamatan</th>
                             <td>{{ $kartuKeluarga->kecamatan ? formatWilayah($kartuKeluarga->kecamatan->name) : '-' }}</td>
@@ -79,41 +79,66 @@
             </div>
 
             <h5 class="mt-4 mb-3">Anggota Keluarga</h5>
+
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Nama</th>
-                            <th>NIK</th>
-                            <th>Jenis Kelamin</th>
-                            <th>Status KK</th>
-                            <th>Aksi</th>
+                            <th class="text-nowrap">#</th>
+                            <th class="text-nowrap">Nama</th>
+                            <th class="text-nowrap">NIK</th>
+                            <th class="text-nowrap">No KK</th>
+                            <th class="text-nowrap">Status KK</th>
+                            <th class="text-nowrap">Rayon</th>
+                            <th class="text-nowrap">Gender</th>
+                            <th class="text-nowrap">Tgl Lahir</th>
+                            <th class="text-nowrap">Usia</th>
+                            <th class="text-nowrap">Pelayanan</th>
+                            <th class="text-nowrap">Baptis</th>
+                            <th class="text-nowrap">Tgl Baptis</th>
+                            <th class="text-nowrap">Pernikahan</th>
+                            <th class="aksi-header">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($kartuKeluarga->jemaats as $jemaat)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $jemaat->nama }}</td>
-                                <td>{{ $jemaat->nik }}</td>
-                                <td>{{ $jemaat->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
-                                <td>{{ Str::title($jemaat->status_kk) }}</td>
-                                <td>
-                                    <a href="{{ route('jemaats.show', $jemaat->id) }}" class="btn btn-sm btn-info"
-                                        title="Detail">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
+                                <td class="text-nowrap">{{ $loop->iteration }}</td>
+                                <td class="text-nowrap">{{ $jemaat->nama }}</td>
+                                <td class="text-nowrap">{{ $jemaat->nik }}</td>
+                                <td class="text-nowrap">{{ $jemaat->kartuKeluarga->no_kk ?? '-' }}</td>
+                                <td class="text-nowrap">{{ \App\Models\Jemaat::STATUS_KK[$jemaat->status_kk] ?? '-' }}
+                                </td>
+                                <td class="text-nowrap">{{ $jemaat->kartuKeluarga->rayon->nama ?? '-' }}</td>
+                                <td class="text-nowrap">{{ $jemaat->gender === 'L' ? 'L' : 'P' }}</td>
+                                <td class="text-nowrap">
+                                    {{ \Carbon\Carbon::parse($jemaat->tanggal_lahir)->format('d-m-Y') }}
+                                </td>
+                                <td class="text-nowrap">{{ \Carbon\Carbon::parse($jemaat->tanggal_lahir)->age }}</td>
+                                <td class="text-nowrap">{{ ucwords(strtolower($jemaat->status_pelayanan ?? '-')) }}</td>
+                                <td class="text-nowrap">{{ $jemaat->status_baptis ? 'Sudah' : 'Belum' }}</td>
+                                <td class="text-nowrap">
+                                    {{ $jemaat->tanggal_baptis ? \Carbon\Carbon::parse($jemaat->tanggal_baptis)->format('d-m-Y') : '-' }}
+                                </td>
+                                <td class="text-nowrap">{{ ucwords(strtolower($jemaat->status_kawin ?? '-')) }}</td>
+                                <td class="text-end aksi-cell">
+                                    <div class="d-flex justify-content-end gap-1">
+                                        <a href="{{ route('jemaats.show', $jemaat->id) }}" class="btn btn-sm btn-info"
+                                            title="Detail">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">Tidak ada anggota keluarga</td>
+                                <td colspan="12" class="text-center">Tidak ada data jemaat</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+
         </div>
         <div class="card-footer">
             <a href="{{ route('kartu-keluarga.index') }}" class="btn btn-secondary">
