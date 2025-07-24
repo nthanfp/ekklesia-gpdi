@@ -97,7 +97,8 @@ class JemaatController extends Controller
             ->orderBy($sortBy, $sortOrder)
             ->get(); // Use get() for all data
 
-        $pdf = Pdf::loadView('jemaats.export_pdf', compact('jemaats'));
+        $pdf = Pdf::loadView('jemaats.export_pdf', compact('jemaats'))
+            ->setPaper('a4', 'landscape'); // Tambahkan ini untuk orientasi landscape
         return $pdf->download('data_jemaat_' . date('Ymd_His') . '.pdf');
     }
 

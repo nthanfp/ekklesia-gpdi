@@ -3,13 +3,14 @@
 namespace App\Exports;
 
 use App\Models\Jemaat;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting; // Import trait ini
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat; // Import kelas NumberFormat
 
-use Illuminate\Support\Collection;
-
-class JemaatExport implements FromCollection, WithHeadings, WithMapping
+class JemaatExport implements FromCollection, WithHeadings, WithMapping, WithColumnFormatting
 {
     protected $search;
     protected $rayonId;
@@ -23,8 +24,16 @@ class JemaatExport implements FromCollection, WithHeadings, WithMapping
     protected $sortOrder;
 
     public function __construct(
-        $search, $rayonId, $statusKk, $gender, $statusPelayanan,
-        $statusBaptis, $statusKawin, $pendidikan, $sortBy, $sortOrder
+        $search,
+        $rayonId,
+        $statusKk,
+        $gender,
+        $statusPelayanan,
+        $statusBaptis,
+        $statusKawin,
+        $pendidikan,
+        $sortBy,
+        $sortOrder
     ) {
         $this->search = $search;
         $this->rayonId = $rayonId;
@@ -39,8 +48,8 @@ class JemaatExport implements FromCollection, WithHeadings, WithMapping
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection(): Collection
     {
         // Re-use the query logic from the index method in JemaatController
@@ -106,7 +115,8 @@ class JemaatExport implements FromCollection, WithHeadings, WithMapping
     {
         return [
             $jemaat->no_anggota,
-            $jemaat->nik,
+            // Hapus tanda kutip tunggal, format akan diatur di columnFormats()
+            $jemaat->nik ?? '-',
             $jemaat->nama,
             $jemaat->telepon,
             $jemaat->getNamaGenderAttribute(), // Menggunakan accessor
@@ -122,8 +132,20 @@ class JemaatExport implements FromCollection, WithHeadings, WithMapping
             $jemaat->statusKeaktifanLabel, // Menggunakan accessor
             $jemaat->tanggal_nonaktif ? $jemaat->tanggal_nonaktif->format('d-m-Y') : '-',
             $jemaat->statusKkLabel, // Menggunakan accessor
+            // Hapus tanda kutip tunggal, format akan diatur di columnFormats()
             $jemaat->kartuKeluarga->no_kk ?? '-',
             $jemaat->kartuKeluarga->rayon->nama ?? '-',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function columnFormats(): array
+    {
+        return [
+            'B' => NumberFormat::FORMAT_TEXT, // Kolom B adalah NIK
+            'R' => NumberFormat::FORMAT_TEXT, // Kolom R adalah No. KK
         ];
     }
 }
