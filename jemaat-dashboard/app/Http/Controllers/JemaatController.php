@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\JemaatExport;
 use App\Models\Jemaat;
 use App\Models\KartuKeluarga;
 use App\Models\Rayon;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Excel;
 
 class JemaatController extends Controller
 {
@@ -14,8 +17,12 @@ class JemaatController extends Controller
     {
         $search = request('search');
         $rayonId = request('rayon_id');
-        $kkId = request('kartu_keluarga_id');
         $statusKk = request('status_kk');
+        $gender = request('gender');
+        $statusPelayanan = request('status_pelayanan');
+        $statusBaptis = request('status_baptis');
+        $statusKawin = request('status_kawin');
+        $pendidikan = request('pendidikan');
         $sortBy = request('sort_by', 'nama');
         $sortOrder = request('sort_order', 'asc');
 
@@ -27,22 +34,103 @@ class JemaatController extends Controller
                     fn($qq) =>
                     $qq->whereRaw("nama ILIKE ?", ["%$search%"])
                         ->orWhereRaw("nik ILIKE ?", ["%$search%"])
-                        ->orWhereRaw("no_anggota ILIKE ?", ["%$search%"])
+                        ->orWhereHas(
+                            'kartuKeluarga',
+                            fn($kk) =>
+                            $kk->whereRaw("no_kk ILIKE ?", ["%$search%"])
+                        )
                 )
             )
             ->when($rayonId, fn($q) => $q->whereHas('kartuKeluarga', fn($qq) => $qq->where('rayon_id', $rayonId)))
-            ->when($kkId, fn($q) => $q->where('kartu_keluarga_id', $kkId))
             ->when($statusKk, fn($q) => $q->where('status_kk', $statusKk))
+            ->when($gender, fn($q) => $q->where('gender', $gender))
+            ->when($statusPelayanan, fn($q) => $q->where('status_pelayanan', $statusPelayanan))
+            ->when($statusBaptis !== null, fn($q) => $q->where('status_baptis', $statusBaptis))
+            ->when($statusKawin, fn($q) => $q->where('status_kawin', $statusKawin))
+            ->when($pendidikan, fn($q) => $q->where('pendidikan', $pendidikan))
             ->orderBy($sortBy, $sortOrder)
             ->paginate(10)
             ->appends(request()->query());
 
         $rayons = Rayon::orderBy('nama')->get();
-        $kartuKeluargas = KartuKeluarga::orderBy('no_kk')->get();
 
-        return view('jemaats.index', compact('jemaats', 'rayons', 'kartuKeluargas'));
+        return view('jemaats.index', compact('jemaats', 'rayons'));
     }
 
+    // Metode untuk ekspor PDF
+    public function exportPdf()
+    {
+        $search = request('search');
+        $rayonId = request('rayon_id');
+        $statusKk = request('status_kk');
+        $gender = request('gender');
+        $statusPelayanan = request('status_pelayanan');
+        $statusBaptis = request('status_baptis');
+        $statusKawin = request('status_kawin');
+        $pendidikan = request('pendidikan');
+        $sortBy = request('sort_by', 'nama');
+        $sortOrder = request('sort_order', 'asc');
+
+        // Re-use the query logic from the index method
+        $jemaats = Jemaat::with(['kartuKeluarga.rayon'])
+            ->when(
+                $search,
+                fn($q) =>
+                $q->where(
+                    fn($qq) =>
+                    $qq->whereRaw("nama ILIKE ?", ["%$search%"])
+                        ->orWhereRaw("nik ILIKE ?", ["%$search%"])
+                        ->orWhereHas(
+                            'kartuKeluarga',
+                            fn($kk) =>
+                            $kk->whereRaw("no_kk ILIKE ?", ["%$search%"])
+                        )
+                )
+            )
+            ->when($rayonId, fn($q) => $q->whereHas('kartuKeluarga', fn($qq) => $qq->where('rayon_id', $rayonId)))
+            ->when($statusKk, fn($q) => $q->where('status_kk', $statusKk))
+            ->when($gender, fn($q) => $q->where('gender', $gender))
+            ->when($statusPelayanan, fn($q) => $q->where('status_pelayanan', $statusPelayanan))
+            ->when($statusBaptis !== null, fn($q) => $q->where('status_baptis', $statusBaptis))
+            ->when($statusKawin, fn($q) => $q->where('status_kawin', $statusKawin))
+            ->when($pendidikan, fn($q) => $q->where('pendidikan', $pendidikan))
+            ->orderBy($sortBy, $sortOrder)
+            ->get(); // Use get() for all data
+
+        $pdf = Pdf::loadView('jemaats.export_pdf', compact('jemaats'));
+        return $pdf->download('data_jemaat_' . date('Ymd_His') . '.pdf');
+    }
+
+    // Metode untuk ekspor XLS
+    public function exportXls(Excel $excel) // Injeksi instance ExcelService
+    {
+        $search = request('search');
+        $rayonId = request('rayon_id');
+        $statusKk = request('status_kk');
+        $gender = request('gender');
+        $statusPelayanan = request('status_pelayanan');
+        $statusBaptis = request('status_baptis');
+        $statusKawin = request('status_kawin');
+        $pendidikan = request('pendidikan');
+        $sortBy = request('sort_by', 'nama');
+        $sortOrder = request('sort_order', 'asc');
+
+        return $excel->download( // Panggil metode download pada instance $excel
+            new JemaatExport(
+                $search,
+                $rayonId,
+                $statusKk,
+                $gender,
+                $statusPelayanan,
+                $statusBaptis,
+                $statusKawin,
+                $pendidikan,
+                $sortBy,
+                $sortOrder
+            ),
+            'data_jemaat_' . date('Ymd_His') . '.xlsx'
+        );
+    }
 
     public function show(Jemaat $jemaat)
     {

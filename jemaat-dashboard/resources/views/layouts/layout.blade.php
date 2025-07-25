@@ -8,11 +8,12 @@
 
     {{-- Bootstrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     {{-- Icons (Fontawesome & Bootstrap Icon) --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
     {{-- Custom Styles --}}
     <style>
         :root {
@@ -41,6 +42,7 @@
             background-color: var(--light);
             color: var(--dark);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Sidebar */
@@ -169,6 +171,10 @@
             padding: 2rem;
             background-color: #f5f7fa;
             transition: margin-left 0.3s ease;
+            max-width: 100%;
+            /* ⬅️ Ini penting */
+            overflow-x: hidden;
+            /* Opsional, untuk extra safety */
         }
 
         .card {
@@ -266,7 +272,11 @@
             }
         }
     </style>
+
     @stack('styles')
+
+    @yield('styles')
+
 </head>
 
 <body>
@@ -408,6 +418,7 @@
         });
     </script>
     @stack('scripts')
+    @yield('scripts')
 </body>
 
 </html>

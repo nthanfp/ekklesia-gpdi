@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="row g-4">
-    <!-- Card 1: Kepala Keluarga -->
+    <!-- Cards -->
     <div class="col-xl-3 col-md-6">
         <div class="card border-start border-primary border-4">
             <div class="card-header bg-white">
@@ -23,7 +23,7 @@
         </div>
     </div>
     
-    <!-- Card 2: Jumlah Jemaat -->
+    <!-- Card Jumlah Jemaat -->
     <div class="col-xl-3 col-md-6">
         <div class="card border-start border-success border-4">
             <div class="card-header bg-white">
@@ -35,13 +35,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="card-value">{{ number_format($totalJemaat ?? 0) }}</div>
+                <div class="card-value">{{ number_format($totalJemaat) }}</div>
                 <div class="card-detail">Total anggota jemaat</div>
             </div>
         </div>
     </div>
     
-    <!-- Card 3: Majelis -->
+    <!-- Card Majelis -->
     <div class="col-xl-3 col-md-6">
         <div class="card border-start border-info border-4">
             <div class="card-header bg-white">
@@ -62,22 +62,7 @@
         </div>
     </div>
     
-    <!-- Card 4: Ulang Tahun Lahir -->
-    <div class="col-xl-3 col-md-6">
-        <div class="card border-start border-warning border-4">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0 text-warning">
-                    <i class="fas fa-birthday-cake me-2"></i>Ulang Tahun
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="card-value">{{ number_format($ulangTahunBulanIniCount ?? 0) }}</div>
-                <div class="card-detail">Jemaat berulang tahun bulan ini</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Card 5: Ulang Tahun Pernikahan -->
+    <!-- Card Ulang Tahun Pernikahan -->
     <div class="col-xl-3 col-md-6">
         <div class="card border-start border-danger border-4">
             <div class="card-header bg-white">
@@ -86,20 +71,14 @@
                 </h5>
             </div>
             <div class="card-body">
-                <div class="card-value">{{ number_format($ulangTahunPernikahanCount ?? 0) }}</div>
-                <div class="card-detail">Pasangan berulang tahun pernikahan bulan ini</div>
-                @if($ulangTahunPernikahanCount ?? 0 > 0)
-                    <div class="mt-2 text-danger small">
-                        <i class="fas fa-glass-cheers"></i> 
-                        {{ $ulangTahunPernikahanCount }} pasangan merayakan
-                    </div>
-                @endif
+                <div class="card-value">{{ number_format($ulangTahunPernikahanBulanIniCount ?? 0) }}</div>
+                <div class="card-detail">Pernikahan berulang tahun bulan ini</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Tabel Jemaat Terbaru -->
+<!-- Recent Members Table -->
 <div class="card mt-4">
     <div class="card-header bg-white">
         <div class="d-flex justify-content-between align-items-center">
@@ -131,7 +110,7 @@
                                 {{ $jemaat->status_kk }}
                             </span>
                         </td>
-                        <td>{{ $jemaat->kartuKeluarga?->rayon?->nama ?? '-' }}</td>
+                        <td>{{ $jemaat->kartuKeluarga->rayon->nama ?? '-' }}</td>
                         <td>{{ $jemaat->created_at->translatedFormat('d M Y') }}</td>
                     </tr>
                     @empty
@@ -150,26 +129,113 @@
 
 @push('styles')
 <style>
-    /* Warna Card */
     .border-primary-light { border-color: #e3f2fd !important; }
     .border-success-light { border-color: #e8f5e9 !important; }
-    .border-info-light { border-color: #e6f7ff !important; }
-    .border-warning-light { border-color: #fff3cd !important; }
     .border-danger-light { border-color: #fde8e8 !important; }
-    
     .bg-primary-light { background-color: #e3f2fd; }
     .bg-success-light { background-color: #e8f5e9; }
-    .bg-info-light { background-color: #e6f7ff; }
-    .bg-warning-light { background-color: #fff3cd; }
     .bg-danger-light { background-color: #fde8e8; }
     
-    /* Animasi Hover */
-    .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .card:hover { 
-        transform: translateY(-5px); 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    .card-value {
+        font-size: 1.75rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+    
+    .card-detail {
+        color: #6c757d;
+        font-size: 0.875rem;
     }
 </style>
 @endpush
 
+@push('scripts')
+<script>
+    //Masih pengembangan dan bisa digunakan apabila perlu
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     // Growth Chart
+    //     const growthCtx = document.getElementById('growthChart').getContext('2d');
+    //     new Chart(growthCtx, {
+    //         type: 'line',
+    //         data: {
+    //             labels: @json($monthLabels ?? 0),
+    //             datasets: [{
+    //                 label: 'Jumlah Jemaat',
+    //                 data: @json($jemaatGrowthData ?? 0),
+    //                 borderColor: 'rgba(78, 84, 200, 1)',
+    //                 backgroundColor: 'rgba(78, 84, 200, 0.1)',
+    //                 borderWidth: 2,
+    //                 tension: 0.4,
+    //                 fill: true
+    //             }]
+    //         },
+    //         options: {
+    //             responsive: true,
+    //             maintainAspectRatio: false,
+    //             plugins: {
+    //                 legend: {
+    //                     display: false
+    //                 },
+    //                 tooltip: {
+    //                     callbacks: {
+    //                         label: function(context) {
+    //                             return `Jemaat: ${context.raw}`;
+    //                         }
+    //                     }
+    //                 }
+    //             },
+    //             scales: {
+    //                 y: {
+    //                     beginAtZero: true,
+    //                     ticks: {
+    //                         precision: 0
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     });
+        
+        // Rayon Chart
+        const rayonCtx = document.getElementById('rayonChart').getContext('2d');
+        new Chart(rayonCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @json($rayonLabels ?? 0 ),
+                datasets: [{
+                    data: @json($rayonData ?? 0),
+                    backgroundColor: [
+                        'rgba(78, 84, 200, 0.8)',
+                        'rgba(143, 148, 251, 0.8)',
+                        'rgba(246, 201, 14, 0.8)',
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(220, 53, 69, 0.8)',
+                        'rgba(253, 126, 20, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
 @endsection

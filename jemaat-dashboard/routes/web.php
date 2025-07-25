@@ -65,6 +65,9 @@ Route::middleware('auth')->group(function () {
         'update'  => 'jemaats.update',
         'destroy' => 'jemaats.destroy',
     ]);
+
+    Route::get('/jemaats/export/pdf', [JemaatController::class, 'exportPdf'])->name('jemaats.export.pdf');
+    Route::get('/jemaats/export/xls', [JemaatController::class, 'exportXls'])->name('jemaats.export.xls');
 });
 
 Route::get('/', function () {

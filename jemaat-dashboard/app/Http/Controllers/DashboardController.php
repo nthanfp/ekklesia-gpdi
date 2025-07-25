@@ -15,6 +15,11 @@ class DashboardController extends Controller
         $totalJemaat = Jemaat::count();
         $totalMajelis = Jemaat::where('status_pelayanan', 'MAJELIS')->count();
 
+        // Calculate wedding anniversaries this month
+        $ulangTahunPernikahanBulanIniCount = KartuKeluarga::whereMonth('tanggal_pernikahan', now()->month)
+            ->whereYear('tanggal_pernikahan', '<=', now()->year)
+            ->count();
+         // masih pengembangan(Development) bisa digunakan    
         // Pertumbuhan KK Bulan Ini
         $lastMonthKK = KartuKeluarga::whereMonth('created_at', Carbon::now()->subMonth()->month)->count();
         $growthKK = $lastMonthKK > 0
@@ -59,7 +64,7 @@ class DashboardController extends Controller
             'totalMajelis',
             'growthKK',
             'growthJemaat',
-            'growthYear',
+            //'growthYear',
             'ulangTahunCount',
             'ulangTahunBulanIni',
             'ulangTahunPernikahan',
