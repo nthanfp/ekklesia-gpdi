@@ -154,7 +154,21 @@
                         </div>
                     </div>
                 </div>
-
+                {{-- Tanggal Pernikahan --}}
+                <div class="col-md-6">
+                     <label for="tanggal_pernikahan" class="form-label">Tanggal Pernikahan</label>
+                        <div class="input-group">
+                      <span class="input-group-text"><i class="fas fa-ring"></i></span> <!-- Ganti ikon dengan simbol pernikahan -->
+                     <input type="date"
+                              class="form-control @error('tanggal_pernikahan') is-invalid @enderror"
+                              id="tanggal_pernikahan" 
+                               name="tanggal_pernikahan" 
+                              value="{{ old('tanggal_pernikahan', $data->tanggal_pernikahan ?? '') }}">
+                            </div>
+                             @error('tanggal_pernikahan')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                              @enderror
+                    </div>
                 {{-- Buttons --}}
                 <div class="mt-4 d-flex justify-content-between">
                     <a href="{{ route('kartu-keluarga.index') }}" class="btn btn-secondary">
