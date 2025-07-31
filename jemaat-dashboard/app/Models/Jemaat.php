@@ -32,11 +32,12 @@ class Jemaat extends Model
     ];
 
     protected $casts = [
-        'tanggal_lahir'     => 'date',
-        'tanggal_baptis'    => 'date',
-        'tanggal_gabung'    => 'date',
-        'tanggal_nonaktif'  => 'date',
-        'status_baptis'     => 'boolean',
+        'tanggal_lahir'         => 'date',
+        'tanggal_baptis'        => 'date',
+        'tanggal_gabung'        => 'date',
+        'tanggal_nonaktif'      => 'date',
+        'tanggal_pernikahan'    => 'date',
+        'status_baptis'         => 'boolean',
     ];
 
     // ========================
