@@ -16,6 +16,8 @@ class Jemaat extends Model
         'gender',
         'tanggal_lahir',
         'status_kawin',
+        'tanggal_pernikahan',
+        'is_menikah',
         'pendidikan',
         'gelar',
         'status_baptis',
@@ -109,6 +111,15 @@ class Jemaat extends Model
     public function scopeKepalaKeluarga($query)
     {
         return $query->where('status_kk', 'KEPALA_KELUARGA');
+    }
+
+    // Scope untuk filter
+    public function scopeSudahMenikah($query) {
+        return $query->where('is_menikah', true);
+    }
+
+    public function scopeBelumMenikah($query) {
+        return $query->where('is_menikah', false);
     }
 
     // ========================
