@@ -45,6 +45,10 @@
                                 <td>{{ \App\Models\Jemaat::STATUS_KAWIN[$jemaat->status_kawin] ?? '-' }}</td>
                             </tr>
                             <tr>
+                                <th>Tanggal Pernikahan</th>
+                                <td>{{ $jemaat->tanggal_pernikahan?->format('d-m-Y') ?? '-' }}</td>
+                            </tr>
+                            <tr>
                                 <th>Pendidikan</th>
                                 <td>{{ \App\Models\Jemaat::PENDIDIKAN[$jemaat->pendidikan] ?? '-' }}</td>
                             </tr>

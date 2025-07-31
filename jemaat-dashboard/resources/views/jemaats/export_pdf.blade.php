@@ -6,7 +6,6 @@
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
-            /* Penting untuk mendukung karakter non-Latin seperti di Bahasa Indonesia */
             font-size: 10px;
         }
 
@@ -16,8 +15,7 @@
             margin-bottom: 20px;
         }
 
-        th,
-        td {
+        th, td {
             border: 1px solid #ddd;
             padding: 6px;
             text-align: left;
@@ -37,6 +35,10 @@
         .text-center {
             text-align: center;
         }
+
+        .nowrap {
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -53,6 +55,8 @@
                 <th>Gender</th>
                 <th>Tgl Lahir</th>
                 <th>Status KK</th>
+                <th>Status Pernikahan</th>
+                <th>Tgl Pernikahan</th>
                 <th>No. KK</th>
                 <th>Rayon</th>
                 <th>Status Pelayanan</th>
@@ -63,13 +67,29 @@
             @foreach ($jemaats as $index => $jemaat)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $jemaat->no_anggota }}</td>
-                    <td>{{ $jemaat->nik ?? '-' }}</td>
+                    <td class="nowrap">{{ $jemaat->no_anggota }}</td>
+                    <td class="nowrap">{{ $jemaat->nik ?? '-' }}</td>
                     <td>{{ $jemaat->nama }}</td>
-                    <td>{{ $jemaat->getNamaGenderAttribute() }}</td>
-                    <td>{{ $jemaat->tanggal_lahir ? $jemaat->tanggal_lahir->format('d-m-Y') : '-' }}</td>
+                    <td class="text-center">{{ $jemaat->getNamaGenderAttribute() }}</td>
+                    <td class="nowrap">{{ $jemaat->tanggal_lahir ? $jemaat->tanggal_lahir->format('d-m-Y') : '-' }}</td>
                     <td>{{ $jemaat->statusKkLabel }}</td>
-                    <td>{{ $jemaat->kartuKeluarga->no_kk ?? '-' }}</td>
+                    <td class="text-center">
+                        @if($jemaat->status_kk === 'ANAK')
+                            {{ $jemaat->is_menikah ? 'Sudah' : 'Belum' }}
+                        @else
+                            {{ $jemaat->tanggal_pernikahan ? 'Sudah' : 'Belum' }}
+                        @endif
+                    </td>
+                    <td class="nowrap">
+                        @if($jemaat->status_kk === 'ANAK' && $jemaat->is_menikah)
+                            {{ $jemaat->tanggal_pernikahan ? $jemaat->tanggal_pernikahan->format('d-m-Y') : '-' }}
+                        @elseif(in_array($jemaat->status_kk, ['KEPALA', 'ISTRI']))
+                            {{ $jemaat->tanggal_pernikahan ? $jemaat->tanggal_pernikahan->format('d-m-Y') : '-' }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="nowrap">{{ $jemaat->kartuKeluarga->no_kk ?? '-' }}</td>
                     <td>{{ $jemaat->kartuKeluarga->rayon->nama ?? '-' }}</td>
                     <td>{{ $jemaat->statusPelayananLabel }}</td>
                     <td>{{ $jemaat->statusKeaktifanLabel }}</td>
@@ -78,5 +98,4 @@
         </tbody>
     </table>
 </body>
-
 </html>

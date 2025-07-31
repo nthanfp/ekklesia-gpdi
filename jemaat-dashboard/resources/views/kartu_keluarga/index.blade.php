@@ -15,9 +15,6 @@
                 <h5 class="card-title mb-0">
                     <i class="fas fa-address-card me-2"></i>Daftar Kartu Keluarga
                 </h5>
-                <a href="{{ route('kartu-keluarga.create') }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus me-1"></i> Tambah KK
-                </a>
             </div>
         </div>
         

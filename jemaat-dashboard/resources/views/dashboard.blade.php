@@ -72,7 +72,23 @@
             </div>
             <div class="card-body">
                 <div class="card-value">{{ number_format($ulangTahunPernikahanBulanIniCount ?? 0) }}</div>
-                <div class="card-detail">Pernikahan berulang tahun bulan ini</div>
+                <div class="card-detail">Ulang tahun Pernikahan bulan ini</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card Ulang Tahun Pribadi -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-start border-danger border-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0 text-danger">
+                    <i class="fas fa-birthday0cake"></i>Ulang Tahun Pribadi
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="card-value">{{ number_format($ulangTahunBulanIni ?? 0) }}</div>
+                <div class="card-detail">Ulang tahun Pribadi bulan ini</div>
             </div>
         </div>
     </div>

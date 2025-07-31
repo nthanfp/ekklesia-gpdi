@@ -53,6 +53,10 @@ class CreateJemaatsTable extends Migration
 
             $table->timestamps();
         });
+        Schema::table('jemaats', function (Blueprint $table) {
+    $table->date('tanggal_pernikahan')->nullable()->after('status_kawin');
+    $table->boolean('is_menikah')->default(false)->after('tanggal_pernikahan');
+});
     }
 
     public function down()

@@ -28,8 +28,7 @@
                         <div class="row g-3">
                             {{-- 🔹 INFORMASI PRIBADI --}}
                             <div class="col-md-12">
-                                <label for="no_anggota" class="form-label">Nomor Anggota <span
-                                        class="text-danger">*</span></label>
+                                <label for="no_anggota" class="form-label">Nomor Anggota <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-hash"></i></span>
                                     <input type="text" class="form-control @error('no_anggota') is-invalid @enderror"
@@ -54,8 +53,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="nama" class="form-label">Nama Lengkap <span
-                                        class="text-danger">*</span></label>
+                                <label for="nama" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
                                     <input type="text" class="form-control @error('nama') is-invalid @enderror"
@@ -67,8 +65,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="tanggal_lahir" class="form-label">Tanggal Lahir <span
-                                        class="text-danger">*</span></label>
+                                <label for="tanggal_lahir" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                                     <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror"
@@ -82,8 +79,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="gender" class="form-label">Jenis Kelamin <span
-                                        class="text-danger">*</span></label>
+                                <label for="gender" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
                                 <select class="form-select @error('gender') is-invalid @enderror" id="gender"
                                     name="gender" required>
                                     <option value="">Pilih Jenis Kelamin</option>
@@ -171,7 +167,8 @@
                                         <optgroup label="{{ $rayon }}">
                                             @foreach ($items as $kk)
                                                 <option value="{{ $kk->id }}"
-                                                    {{ old('kartu_keluarga_id', $jemaat->kartu_keluarga_id) == $kk->id ? 'selected' : '' }}>
+                                                    {{ old('kartu_keluarga_id', $jemaat->kartu_keluarga_id) == $kk->id ? 'selected' : '' }}
+                                                    data-tanggal-pernikahan="{{ optional($kk->tanggal_pernikahan)->format('Y-m-d') }}">
                                                     {{ $kk->no_kk }} - {{ $kk->kepala_keluarga }}
                                                 </option>
                                             @endforeach
@@ -184,14 +181,15 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="status_kk" class="form-label">Status dalam KK</label>
-                                <select class="form-select @error('status_kk') is-invalid @enderror" id="status_kk"
-                                    name="status_kk">
+                                <label for="status_kk" class="form-label">Status dalam KK <span class="text-danger">*</span></label>
+                                <select class="form-select @error('status_kk') is-invalid @enderror" id="status_kk" name="status_kk" required>
                                     <option value="">Pilih Status</option>
                                     @foreach (\App\Models\Jemaat::STATUS_KK as $value => $label)
-                                        <option value="{{ $value }}"
-                                            {{ old('status_kk', $jemaat->status_kk) == $value ? 'selected' : '' }}>
-                                            {{ $label }}</option>
+                                        <option value="{{ $value }}" 
+                                            {{ old('status_kk', $jemaat->status_kk) == $value ? 'selected' : '' }}
+                                            @if($value === 'ANAK') data-is-anak="true" @endif>
+                                            {{ $label }}
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('status_kk')
@@ -199,10 +197,30 @@
                                 @enderror
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-2" id="married_switch_container">
+                                    <input class="form-check-input" type="checkbox" id="is_menikah" name="is_menikah" 
+                                        {{ old('is_menikah', $jemaat->is_menikah ?? false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_menikah">Sudah Menikah</label>
+                                </div>
+                                
+                                <div id="tanggal_pernikahan_container">
+                                    <label for="tanggal_pernikahan" class="form-label">Tanggal Pernikahan</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-heart-fill"></i></span>
+                                        <input type="date" class="form-control @error('tanggal_pernikahan') is-invalid @enderror" 
+                                            id="tanggal_pernikahan" name="tanggal_pernikahan"
+                                            value="{{ old('tanggal_pernikahan', optional($jemaat->tanggal_pernikahan ?? null)->format('Y-m-d')) }}">
+                                    </div>
+                                    @error('tanggal_pernikahan')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             {{-- 🔹 STATUS GEREJAWI --}}
                             <div class="col-md-6">
-                                <label for="status_pelayanan" class="form-label">Status Pelayanan <span
-                                        class="text-danger">*</span></label>
+                                <label for="status_pelayanan" class="form-label">Status Pelayanan <span class="text-danger">*</span></label>
                                 <select class="form-select @error('status_pelayanan') is-invalid @enderror"
                                     id="status_pelayanan" name="status_pelayanan" required>
                                     <option value="">Pilih Status</option>
@@ -218,8 +236,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="status_keaktifan" class="form-label">Status Keaktifan <span
-                                        class="text-danger">*</span></label>
+                                <label for="status_keaktifan" class="form-label">Status Keaktifan <span class="text-danger">*</span></label>
                                 <select class="form-select @error('status_keaktifan') is-invalid @enderror"
                                     id="status_keaktifan" name="status_keaktifan" required>
                                     <option value="">Pilih Status</option>
@@ -263,8 +280,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="status_baptis" class="form-label">Status Baptis <span
-                                        class="text-danger">*</span></label>
+                                <label for="status_baptis" class="form-label">Status Baptis <span class="text-danger">*</span></label>
                                 <select class="form-select @error('status_baptis') is-invalid @enderror"
                                     id="status_baptis" name="status_baptis" required>
                                     <option value="">Pilih Status</option>
@@ -334,6 +350,7 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Logika untuk status baptis dan keaktifan
             const statusBaptis = document.getElementById('status_baptis');
             const tanggalBaptis = document.getElementById('tanggal_baptis');
             const statusKeaktifan = document.getElementById('status_keaktifan');
@@ -350,9 +367,59 @@
             statusBaptis.addEventListener('change', toggleTanggalBaptis);
             statusKeaktifan.addEventListener('change', toggleTanggalNonaktif);
 
+            // Inisialisasi saat load
             toggleTanggalBaptis();
             toggleTanggalNonaktif();
+
+            // Logika untuk status pernikahan
+            const statusKkSelect = document.getElementById('status_kk');
+            const isMenikahCheckbox = document.getElementById('is_menikah');
+            const tanggalPernikahanContainer = document.getElementById('tanggal_pernikahan_container');
+            const marriedSwitchContainer = document.getElementById('married_switch_container');
+            const kartuKeluargaSelect = document.getElementById('kartu_keluarga_id');
+
+            function updateMarriageFields() {
+                const isAnak = statusKkSelect.value === 'ANAK';
+                const isCucu = statusKk === 'CUCU';
+                const isKepalaIstri = ['KEPALA', 'ISTRI'].includes(statusKkSelect.value);
+
+                // Toggle marriage switch visibility
+                marriedSwitchContainer.style.display = isAnak ? 'block' : 'none';
+                
+                if (isAnak || isCucu) {
+                    // For children, show date only if married
+                    const isMenikah = isMenikahCheckbox.checked;
+                    tanggalPernikahanContainer.style.display = isMenikah ? 'block' : 'none';
+                    if (!isMenikah) {
+                        document.getElementById('tanggal_pernikahan').value = '';
+                    }
+                } 
+                
+                else if (isKepalaIstri && kartuKeluargaSelect) {
+                    // For head/spouse, auto-fill from family card
+                    const selectedKK = kartuKeluargaSelect.options[kartuKeluargaSelect.selectedIndex];
+                    const marriageDate = selectedKK.dataset.tanggalPernikahan;
+                    if (marriageDate) {
+                        document.getElementById('tanggal_pernikahan').value = marriageDate;
+                    }
+                    tanggalPernikahanContainer.style.display = 'block';
+                }
+                else {
+                    // For others (LAINNYA)
+                    tanggalPernikahanContainer.style.display = 'block';
+                }
+            }
+
+            // Initial setup
+            updateMarriageFields();
+
+            // Event listeners
+            statusKkSelect.addEventListener('change', updateMarriageFields);
+            isMenikahCheckbox.addEventListener('change', updateMarriageFields);
+            
+            if (kartuKeluargaSelect) {
+                kartuKeluargaSelect.addEventListener('change', updateMarriageFields);
+            }
         });
     </script>
-
 @endsection
