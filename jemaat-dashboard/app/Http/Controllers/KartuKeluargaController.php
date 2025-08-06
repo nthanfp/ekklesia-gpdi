@@ -95,10 +95,10 @@ class KartuKeluargaController extends Controller
     {
         $kartuKeluarga->load([
             'rayon',
-            'provinsi',
-            'kota',
-            'kecamatan',
-            'kelurahan',
+            // 'provinsi',
+            // 'kota',
+            // 'kecamatan',
+            // 'kelurahan',
             'jemaats' => function ($query) {
                 $query->orderBy('status_kk', 'desc')
                       ->orderBy('nama');
