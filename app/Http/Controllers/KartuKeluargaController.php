@@ -21,14 +21,14 @@ class KartuKeluargaController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('no_kk', 'ILIKE', "%$search%")
-                  ->orWhere('kepala_keluarga', 'ILIKE', "%$search%");
+                    ->orWhere('kepala_keluarga', 'ILIKE', "%$search%");
             });
         }
 
         // Filter ulang tahun pernikahan
-         if ($request->filter == 'ulangtahunpernikahan') {
-             $query->whereMonth('tanggal_pernikahan', now()->month)
-             ->whereYear('tanggal_pernikahan', '<=', now()->year);
+        if ($request->filter == 'ulangtahunpernikahan') {
+            $query->whereMonth('tanggal_pernikahan', now()->month)
+                ->whereYear('tanggal_pernikahan', '<=', now()->year);
         }
 
         // Filter Rayon
@@ -85,10 +85,15 @@ class KartuKeluargaController extends Controller
             // 'tanggal_pernikahan' => 'nullable|date|before_or_equal:today',
         ]);
 
-        KartuKeluarga::create($validated);
+        $kartuKeluarga = KartuKeluarga::create($validated);
 
-        return redirect()->route('kartu-keluarga.index')
-            ->with('success', 'Data kartu keluarga berhasil ditambahkan');
+        $request->session()->flash('last_kk', [
+            'id' => $kartuKeluarga->id,
+            'no_kk' => $kartuKeluarga->no_kk,
+            'kepala_keluarga' => $kartuKeluarga->kepala_keluarga,
+        ]);
+
+        return redirect()->route('jemaats.create')->with('success', 'Data Kartu Keluarga berhasil ditambahkan. Silahkan lanjutkan untuk menambah Jemaat');
     }
 
     public function show(KartuKeluarga $kartuKeluarga)
@@ -101,7 +106,7 @@ class KartuKeluargaController extends Controller
             // 'kelurahan',
             'jemaats' => function ($query) {
                 $query->orderBy('status_kk', 'desc')
-                      ->orderBy('nama');
+                    ->orderBy('nama');
             }
         ]);
 
@@ -129,7 +134,7 @@ class KartuKeluargaController extends Controller
     public function update(Request $request, KartuKeluarga $kartuKeluarga)
     {
         $validated = $request->validate([
-            'no_kk' => 'required|string|max:20|unique:kartu_keluargas,no_kk,'.$kartuKeluarga->id,
+            'no_kk' => 'required|string|max:20|unique:kartu_keluargas,no_kk,' . $kartuKeluarga->id,
             'kepala_keluarga' => 'required|string|max:255',
             'rayon_id' => 'required|exists:rayons,id',
             'provinsi_id' => 'nullable|exists:provinces,id',

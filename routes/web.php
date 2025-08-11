@@ -56,6 +56,9 @@ Route::middleware('auth')->group(function () {
         'destroy' => 'kartu-keluarga.destroy',
     ]);
 
+    
+    Route::get('/jemaats/search-kk', [JemaatController::class, 'searchKK'])->name('jemaats.search-kk');
+    
     Route::resource('jemaats', JemaatController::class)->names([
         'index'   => 'jemaats.index',
         'create'  => 'jemaats.create',

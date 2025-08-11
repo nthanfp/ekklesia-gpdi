@@ -57,6 +57,21 @@ class JemaatController extends Controller
         return view('jemaats.index', compact('jemaats', 'rayons'));
     }
 
+    public function searchKK(Request $request)
+    {
+        $search = $request->get('search', '');
+
+        $kartuKeluargas = KartuKeluarga::with('rayon')
+            ->when($search, function ($query) use ($search) {
+                $query->where('no_kk', 'ILIKE', "%{$search}%")
+                    ->orWhere('kepala_keluarga', 'ILIKE', "%{$search}%");
+            })
+            ->orderBy('kepala_keluarga')
+            ->paginate(10);
+
+        return response()->json($kartuKeluargas);
+    }
+
     // Metode untuk ekspor PDF
     public function exportPdf()
     {

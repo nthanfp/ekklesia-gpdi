@@ -85,6 +85,35 @@
                             </tr>
                         </tbody>
                     </table>
+                    <h5 class="text-primary border-bottom pb-2 mb-3">Alamat</h5>
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th>Provinsi</th>
+                                <td>{{ $jemaat->kartuKeluarga->provinsi->name ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Kota/Kab</th>
+                                <td>{{ $jemaat->kartuKeluarga->kota->name ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Kecamatan</th>
+                                <td>{{ $jemaat->kartuKeluarga->kecamatan->name ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Kelurahan/Desa</th>
+                                <td>{{ $jemaat->kartuKeluarga->kelurahan->name ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Provinsi</th>
+                                <td>{{ $jemaat->kartuKeluarga->provinsi->name ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Alamat Lengkap</th>
+                                <td>{{ $jemaat->kartuKeluarga->alamat_lengkap ?? '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="col-md-12">

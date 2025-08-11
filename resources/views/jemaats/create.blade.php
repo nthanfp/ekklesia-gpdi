@@ -4,6 +4,7 @@
 
 @section('content')
     <div class="row">
+
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -169,7 +170,25 @@
 
                             {{-- 🔹 DATA KELUARGA --}}
                             <div class="col-md-6">
-                                <label for="kartu_keluarga_id" class="form-label">Kartu Keluarga</label>
+                                {{-- Input yang akan menampilkan nama kepala keluarga yang dipilih --}}
+                                <label for="kartu_keluarga" class="form-label">Kartu Keluarga</label>
+                                <div class="input-group">
+                                    @php
+                                        $lastKk = session('last_kk');
+                                        $kkId = old('kartu_keluarga_id', $lastKk['id'] ?? '');
+                                        $kkDisplay = old(
+                                            'kartu_keluarga_display',
+                                            $lastKk ? $lastKk['no_kk'] . ' - ' . $lastKk['kepala_keluarga'] : '',
+                                        );
+                                    @endphp
+                                    <input type="text" id="kartu_keluarga_display" class="form-control" readonly
+                                        placeholder="Pilih Kartu Keluarga" value="{{ $kkDisplay }}">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#kkModal">Pilih</button>
+                                </div>
+                                <input type="hidden" name="kartu_keluarga_id" id="kartu_keluarga_id"
+                                    value="{{ $kkId }}">
+                                {{-- <label for="kartu_keluarga_id" class="form-label">Kartu Keluarga</label>
                                 <select class="form-select @error('kartu_keluarga_id') is-invalid @enderror"
                                     id="kartu_keluarga_id" name="kartu_keluarga_id">
                                     <option value="">Pilih Kartu Keluarga</option>
@@ -192,7 +211,7 @@
                                 </select>
                                 @error('kartu_keluarga_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                @enderror --}}
                             </div>
 
                             <div class="col-md-6">
@@ -271,7 +290,7 @@
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label for="status_keaktifan" class="form-label">Status Keaktifan <span
                                         class="text-danger">*</span></label>
@@ -377,6 +396,28 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="kkModal" tabindex="-1" aria-labelledby="kkModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="kkModalLabel">Cari Kartu Keluarga</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="searchKK" class="form-control mb-3"
+                            placeholder="Cari No. KK atau Kepala Keluarga...">
+                        <div id="kk-list">
+                            {{-- Data KK akan dimuat di sini menggunakan AJAX --}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -470,6 +511,95 @@
             if (kartuKeluargaSelect) {
                 kartuKeluargaSelect.addEventListener('change', updateMarriageFields);
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchKK');
+            const kkList = document.getElementById('kk-list');
+            let page = 1;
+
+            function fetchKK(query = '', page = 1) {
+                fetch(`/jemaats/search-kk?search=${query}&page=${page}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        kkList.innerHTML = ''; // Kosongkan daftar sebelumnya
+                        let tableHtml =
+                            '<table class="table table-hover"><thead><tr><th>No. KK</th><th>Kepala Keluarga</th><th>Rayon</th><th>Aksi</th></tr></thead><tbody>';
+                        data.data.forEach(kk => {
+                            tableHtml += `
+                        <tr>
+                            <td>${kk.no_kk}</td>
+                            <td>${kk.kepala_keluarga}</td>
+                            <td>${kk.rayon ? kk.rayon.nama : 'Tanpa Rayon'}</td>
+                            <td><button type="button" class="btn btn-sm btn-success btn-select-kk" data-id="${kk.id}" data-no-kk="${kk.no_kk}" data-kepala-keluarga="${kk.kepala_keluarga}">Pilih</button></td>
+                        </tr>
+                    `;
+                        });
+                        tableHtml += '</tbody></table>';
+
+                        // Tambahkan paginasi
+                        let paginationHtml = '<nav><ul class="pagination">';
+                        if (data.prev_page_url) {
+                            paginationHtml +=
+                                `<li class="page-item"><a class="page-link" href="#" data-page="${page - 1}">Previous</a></li>`;
+                        }
+                        data.links.forEach(link => {
+                            paginationHtml +=
+                                `<li class="page-item ${link.active ? 'active' : ''}"><a class="page-link" href="#" data-page="${link.label}">${link.label}</a></li>`;
+                        });
+                        if (data.next_page_url) {
+                            paginationHtml +=
+                                `<li class="page-item"><a class="page-link" href="#" data-page="${page + 1}">Next</a></li>`;
+                        }
+                        paginationHtml += '</ul></nav>';
+
+                        kkList.innerHTML = tableHtml + paginationHtml;
+
+                        // Tambahkan event listener untuk tombol "Pilih"
+                        document.querySelectorAll('.btn-select-kk').forEach(button => {
+                            button.addEventListener('click', function() {
+                                const kkId = this.getAttribute('data-id');
+                                const kkText = this.getAttribute('data-no-kk') + ' - ' + this
+                                    .getAttribute('data-kepala-keluarga');
+                                document.getElementById('kartu_keluarga_id').value = kkId;
+                                document.getElementById('kartu_keluarga_display').value =
+                                    kkText;
+                                const kkModal = bootstrap.Modal.getInstance(document
+                                    .getElementById('kkModal'));
+                                kkModal.hide();
+                            });
+                        });
+
+                        // Tambahkan event listener untuk paginasi
+                        document.querySelectorAll('#kk-list .page-link').forEach(link => {
+                            link.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const newPage = this.getAttribute('data-page');
+                                if (!isNaN(newPage)) {
+                                    page = parseInt(newPage);
+                                } else if (newPage === 'Previous' && data.prev_page_url) {
+                                    page = data.current_page - 1;
+                                } else if (newPage === 'Next' && data.next_page_url) {
+                                    page = data.current_page + 1;
+                                }
+                                fetchKK(searchInput.value, page);
+                            });
+                        });
+                    });
+            }
+
+            // Panggil saat modal dibuka
+            const kkModalElement = document.getElementById('kkModal');
+            kkModalElement.addEventListener('show.bs.modal', function() {
+                fetchKK();
+            });
+
+            // Panggil saat user mengetik di kotak pencarian
+            searchInput.addEventListener('input', function() {
+                page = 1; // Reset ke halaman 1 setiap kali pencarian baru
+                fetchKK(this.value);
+            });
         });
     </script>
 @endsection

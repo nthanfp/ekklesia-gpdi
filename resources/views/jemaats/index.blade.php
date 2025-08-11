@@ -211,14 +211,12 @@
             <small class="text-muted mb-2 d-block">
                 Menampilkan {{ $jemaats->count() }} dari total {{ $jemaats->total() }} data
             </small>
-            
+
             <div class="mb-4 flex justify-end gap-2">
-                <a href="{{ route('jemaats.export.pdf', request()->query()) }}"
-                    class="btn btn-sm btn-primary">
+                <a href="{{ route('jemaats.export.pdf', request()->query()) }}" class="btn btn-sm btn-primary">
                     Export PDF
                 </a>
-                <a href="{{ route('jemaats.export.xls', request()->query()) }}"
-                    class="btn btn-sm btn-success">
+                <a href="{{ route('jemaats.export.xls', request()->query()) }}" class="btn btn-sm btn-success">
                     Export XLS
                 </a>
             </div>
