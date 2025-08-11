@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rayon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class RayonController extends Controller
 {
@@ -12,13 +13,11 @@ class RayonController extends Controller
         $query = Rayon::query()
             ->withCount(['kartuKeluargas', 'jemaats']);
 
-        // Search
         if (request('search')) {
             $query->where('nama', 'like', '%' . request('search') . '%')
                 ->orWhere('kode', 'like', '%' . request('search') . '%');
         }
 
-        // Sorting
         if (in_array(request('sort_by'), ['nama', 'kode', 'kartu_keluargas_count', 'jemaats_count'])) {
             $query->orderBy(request('sort_by'), request('sort_order') === 'desc' ? 'desc' : 'asc');
         } else {
@@ -33,16 +32,25 @@ class RayonController extends Controller
 
     public function create()
     {
-        $rayons = Rayon::all();
         return view('rayons.create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode' => 'required|unique:rayons,kode',
             'nama' => 'required'
         ]);
+
+        $slug = Str::slug($validated['nama']);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (Rayon::where('kode', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
+        $validated['kode'] = $slug;
 
         Rayon::create($validated);
 
@@ -63,9 +71,20 @@ class RayonController extends Controller
     public function update(Request $request, Rayon $rayon)
     {
         $validated = $request->validate([
-            'kode' => 'required|unique:rayons,kode,' . $rayon->id,
             'nama' => 'required'
         ]);
+
+        if ($validated['nama'] !== $rayon->nama) {
+            $slug = Str::slug($validated['nama']);
+            $originalSlug = $slug;
+            $count = 1;
+
+            while (Rayon::where('kode', $slug)->where('id', '!=', $rayon->id)->exists()) {
+                $slug = $originalSlug . '-' . $count;
+                $count++;
+            }
+            $validated['kode'] = $slug;
+        }
 
         $rayon->update($validated);
 

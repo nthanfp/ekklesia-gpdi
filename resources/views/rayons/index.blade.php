@@ -51,7 +51,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">#</th>
-                            <th>Kode</th>
+                            {{-- <th>Kode</th> --}}
                             <th>Nama Rayon</th>
                             <th>Jumlah Keluarga</th>
                             <th>Jumlah Jemaat</th>
@@ -62,7 +62,7 @@
                         @forelse($rayons as $rayon)
                             <tr>
                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                <td>{{ $rayon->kode }}</td>
+                                {{-- <td>{{ $rayon->kode }}</td> --}}
                                 <td>{{ $rayon->nama }}</td>
                                 <td>{{ $rayon->kartu_keluargas_count }} Keluarga</td>
                                 <td>{{ $rayon->jemaats_count }}</td>
