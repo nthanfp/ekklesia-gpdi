@@ -52,4 +52,9 @@ class KartuKeluarga extends Model
     {
         return $this->hasMany(Jemaat::class);
     }
+
+    public function kepalaKeluarga()
+    {
+        return $this->hasOne(Jemaat::class)->where('status_kk', 'KEPALA_KELUARGA');
+    }
 }
