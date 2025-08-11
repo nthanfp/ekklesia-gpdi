@@ -185,7 +185,7 @@
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            /* transform: translateY(-5px); */
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
         }
 
