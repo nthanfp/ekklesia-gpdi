@@ -154,20 +154,18 @@
                     </div>
 
                     {{-- Tanggal Pernikahan --}}
-                    <div class="col-md-6">
-                    <label for="tanggal_pernikahan" class="form-label">Tanggal Pernikahan</label>
-                     <div class="input-group">
-                          <span class="input-group-text"><i class="fas fa-ring"></i></span>
-                         <input type="date"
-                             class="form-control @error('tanggal_pernikahan') is-invalid @enderror"
-                              id="tanggal_pernikahan" 
-                              name="tanggal_pernikahan" 
-                              value="{{ old('tanggal_pernikahan', $kartuKeluarga->tanggal_pernikahan ? \Carbon\Carbon::parse($kartuKeluarga->tanggal_pernikahan)->format('Y-m-d') : '') }}">
-                    </div>
-                            @error('tanggal_pernikahan')
+                    {{-- <div class="col-md-6">
+                        <label for="tanggal_pernikahan" class="form-label">Tanggal Pernikahan</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-ring"></i></span>
+                            <input type="date" class="form-control @error('tanggal_pernikahan') is-invalid @enderror"
+                                id="tanggal_pernikahan" name="tanggal_pernikahan"
+                                value="{{ old('tanggal_pernikahan', $kartuKeluarga->tanggal_pernikahan ? \Carbon\Carbon::parse($kartuKeluarga->tanggal_pernikahan)->format('Y-m-d') : '') }}">
+                        </div>
+                        @error('tanggal_pernikahan')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                    </div>
+                        @enderror
+                    </div> --}}
 
                     {{-- Buttons --}}
                     <div class="mt-4 d-flex justify-content-between">

@@ -58,7 +58,7 @@
                 </div>
                 
                 <div class="col-md-12">
-                    <div class="d-flex gap-2">
+                    <div class="d-flex justify-content-start gap-2">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-filter me-1"></i> Filter
                         </button>
@@ -78,7 +78,7 @@
                             <th>Kepala Keluarga</th>
                             <th>Rayon</th>
                             <th class="text-center">Anggota</th>
-                            <th>Tanggal Pernikahan</th>
+                            {{-- <th>Tanggal Pernikahan</th> --}}
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -92,7 +92,7 @@
                                 <td class="text-center">
                                     <span class="badge bg-primary">{{ $kk->jemaats_count }}</span>
                                 </td>
-                                <td>
+                                {{-- <td>
                                     @if($kk->tanggal_pernikahan)
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="fas fa-ring text-danger"></i>
@@ -107,7 +107,7 @@
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
-                                </td>
+                                </td> --}}
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-1">
                                         <a href="{{ route('kartu-keluarga.show', $kk->id) }}" 

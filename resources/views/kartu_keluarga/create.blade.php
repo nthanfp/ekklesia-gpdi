@@ -120,17 +120,6 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="kodepos_id" class="form-label">Kode POS</label>
-                            <input type="number" name="kodepos_id" id="kodepos_id"
-                                class="form-control @error('kodepos_id') is-invalid @enderror"
-                                value="{{ old('kodepos_id') }}">
-                            @error('kodepos_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
                     <div class="col-md-3">
                         <div class="mb-3">
                             <label for="alamat_rw" class="form-label">RW</label>
@@ -138,6 +127,17 @@
                                 class="form-control @error('alamat_rw') is-invalid @enderror"
                                 value="{{ old('alamat_rw') }}" min="1" max="9999">
                             @error('alamat_rw')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="kodepos_id" class="form-label">Kode POS</label>
+                            <input type="number" name="kodepos_id" id="kodepos_id"
+                                class="form-control @error('kodepos_id') is-invalid @enderror"
+                                value="{{ old('kodepos_id') }}">
+                            @error('kodepos_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -155,20 +155,18 @@
                     </div>
                 </div>
                 {{-- Tanggal Pernikahan --}}
-                <div class="col-md-6">
-                     <label for="tanggal_pernikahan" class="form-label">Tanggal Pernikahan</label>
-                        <div class="input-group">
-                      <span class="input-group-text"><i class="fas fa-ring"></i></span> <!-- Ganti ikon dengan simbol pernikahan -->
-                     <input type="date"
-                              class="form-control @error('tanggal_pernikahan') is-invalid @enderror"
-                              id="tanggal_pernikahan" 
-                               name="tanggal_pernikahan" 
-                              value="{{ old('tanggal_pernikahan', $data->tanggal_pernikahan ?? '') }}">
-                            </div>
-                             @error('tanggal_pernikahan')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                              @enderror
+                {{-- <div class="col-md-6">
+                    <label for="tanggal_pernikahan" class="form-label">Tanggal Pernikahan</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-ring"></i></span>
+                        <input type="date" class="form-control @error('tanggal_pernikahan') is-invalid @enderror"
+                            id="tanggal_pernikahan" name="tanggal_pernikahan"
+                            value="{{ old('tanggal_pernikahan', $data->tanggal_pernikahan ?? '') }}">
                     </div>
+                    @error('tanggal_pernikahan')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div> --}}
                 {{-- Buttons --}}
                 <div class="mt-4 d-flex justify-content-between">
                     <a href="{{ route('kartu-keluarga.index') }}" class="btn btn-secondary">

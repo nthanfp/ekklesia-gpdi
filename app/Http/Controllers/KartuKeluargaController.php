@@ -82,7 +82,7 @@ class KartuKeluargaController extends Controller
             'alamat_rt' => 'nullable|integer|min:1|max:9999',
             'alamat_rw' => 'nullable|integer|min:1|max:9999',
             'alamat_lengkap' => 'nullable|string',
-            'tanggal_pernikahan' => 'nullable|date|before_or_equal:today',
+            // 'tanggal_pernikahan' => 'nullable|date|before_or_equal:today',
         ]);
 
         KartuKeluarga::create($validated);
@@ -140,7 +140,7 @@ class KartuKeluargaController extends Controller
             'alamat_rt' => 'nullable|integer|min:1|max:9999',
             'alamat_rw' => 'nullable|integer|min:1|max:9999',
             'alamat_lengkap' => 'nullable|string',
-            'tanggal_pernikahan' => 'nullable|date|before_or_equal:today',
+            // 'tanggal_pernikahan' => 'nullable|date|before_or_equal:today',
         ]);
 
         $kartuKeluarga->update($validated);
