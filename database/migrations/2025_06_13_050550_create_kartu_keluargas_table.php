@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('kartu_keluargas', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('rayon_id')->constrained()->onDelete('restrict');
+            $table->foreignId('rayon_id')->nullable()->constrained()->onDelete('restrict');
             $table->string('no_kk')->unique();
             $table->string('kepala_keluarga');
             $table->date('tanggal_pernikahan')->nullable();
