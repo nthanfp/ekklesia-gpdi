@@ -13,6 +13,11 @@ use Maatwebsite\Excel\Excel;
 
 class JemaatController extends Controller
 {
+    /**
+     * Tampilkan daftar jemaat dengan filter, sorting, dan pagination.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
         $search = request('search');
@@ -57,6 +62,12 @@ class JemaatController extends Controller
         return view('jemaats.index', compact('jemaats', 'rayons'));
     }
 
+    /**
+     * Pencarian Kartu Keluarga (AJAX).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function searchKK(Request $request)
     {
         $search = $request->get('search', '');
@@ -72,7 +83,11 @@ class JemaatController extends Controller
         return response()->json($kartuKeluargas);
     }
 
-    // Metode untuk ekspor PDF
+    /**
+     * Ekspor data jemaat ke PDF.
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function exportPdf()
     {
         $search = request('search');
@@ -86,7 +101,6 @@ class JemaatController extends Controller
         $sortBy = request('sort_by', 'nama');
         $sortOrder = request('sort_order', 'asc');
 
-        // Re-use the query logic from the index method
         $jemaats = Jemaat::with(['kartuKeluarga.rayon'])
             ->when(
                 $search,
@@ -110,15 +124,21 @@ class JemaatController extends Controller
             ->when($statusKawin, fn($q) => $q->where('status_kawin', $statusKawin))
             ->when($pendidikan, fn($q) => $q->where('pendidikan', $pendidikan))
             ->orderBy($sortBy, $sortOrder)
-            ->get(); // Use get() for all data
+            ->get();
 
         $pdf = Pdf::loadView('jemaats.export_pdf', compact('jemaats'))
-            ->setPaper('a4', 'landscape'); // Tambahkan ini untuk orientasi landscape
+            ->setPaper('a4', 'landscape');
+
         return $pdf->download('data_jemaat_' . date('Ymd_His') . '.pdf');
     }
 
-    // Metode untuk ekspor XLS
-    public function exportXls(Excel $excel) // Injeksi instance ExcelService
+    /**
+     * Ekspor data jemaat ke Excel.
+     *
+     * @param  \Maatwebsite\Excel\Excel  $excel
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportXls(Excel $excel)
     {
         $search = request('search');
         $rayonId = request('rayon_id');
@@ -131,7 +151,7 @@ class JemaatController extends Controller
         $sortBy = request('sort_by', 'nama');
         $sortOrder = request('sort_order', 'asc');
 
-        return $excel->download( // Panggil metode download pada instance $excel
+        return $excel->download(
             new JemaatExport(
                 $search,
                 $rayonId,
@@ -148,22 +168,38 @@ class JemaatController extends Controller
         );
     }
 
+    /**
+     * Detail jemaat.
+     *
+     * @param  \App\Models\Jemaat  $jemaat
+     * @return \Illuminate\Contracts\View\View
+     */
     public function show(Jemaat $jemaat)
     {
         return view('jemaats.show', compact('jemaat'));
     }
 
+    /**
+     * Form tambah jemaat.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create()
     {
         $kartuKeluargas = KartuKeluarga::with('rayon')->orderBy('no_kk')->get();
         return view('jemaats.create', compact('kartuKeluargas'));
     }
 
+    /**
+     * Simpan jemaat baru.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
-            'no_anggota' => 'required|string|max:20|unique:jemaats',
             'nik' => 'nullable|string|max:20|unique:jemaats',
             'kartu_keluarga_id' => 'required|exists:kartu_keluargas,id',
             'status_kk' => 'required',
@@ -185,6 +221,8 @@ class JemaatController extends Controller
         ]);
 
         try {
+            $validated['no_anggota'] = $this->generateNoAnggota();
+
             if ($request->hasFile('foto')) {
                 $validated['foto'] = $request->file('foto')->store('foto_jemaat', 'public');
             }
@@ -193,22 +231,33 @@ class JemaatController extends Controller
 
             return redirect()->route('jemaats.index')->with('success', 'Data jemaat berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.' . $e->getMessage());
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. ' . $e->getMessage());
         }
     }
 
-
+    /**
+     * Form edit jemaat.
+     *
+     * @param  \App\Models\Jemaat  $jemaat
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit(Jemaat $jemaat)
     {
         $kartuKeluargas = KartuKeluarga::orderBy('no_kk')->get();
         return view('jemaats.edit', compact('jemaat', 'kartuKeluargas'));
     }
 
+    /**
+     * Update data jemaat.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Jemaat        $jemaat
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, Jemaat $jemaat)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
-            'no_anggota' => 'required|string|max:20|unique:jemaats,no_anggota,' . $jemaat->id,
             'nik' => 'nullable|string|max:20|unique:jemaats,nik,' . $jemaat->id,
             'kartu_keluarga_id' => 'required|exists:kartu_keluargas,id',
             'status_kk' => 'required',
@@ -236,11 +285,19 @@ class JemaatController extends Controller
             $validated['foto'] = $request->file('foto')->store('foto_jemaat', 'public');
         }
 
+        unset($validated['no_anggota']);
+
         $jemaat->update($validated);
 
         return redirect()->route('jemaats.index')->with('success', 'Data jemaat berhasil diperbarui.');
     }
 
+    /**
+     * Hapus data jemaat.
+     *
+     * @param  \App\Models\Jemaat  $jemaat
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(Jemaat $jemaat)
     {
         if ($jemaat->foto) {
@@ -250,5 +307,20 @@ class JemaatController extends Controller
         $jemaat->delete();
 
         return redirect()->route('jemaats.index')->with('success', 'Data jemaat berhasil dihapus.');
+    }
+
+    /**
+     * Generate nomor anggota unik (A0001 - A9999).
+     *
+     * @return string
+     */
+    private function generateNoAnggota(): string
+    {
+        do {
+            $number = rand(1, 9999);
+            $noAnggota = 'A' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        } while (Jemaat::where('no_anggota', $noAnggota)->exists());
+
+        return $noAnggota;
     }
 }

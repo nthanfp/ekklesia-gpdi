@@ -9,14 +9,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * Controller untuk manajemen Kartu Keluarga.
+ */
 class KartuKeluargaController extends Controller
 {
+    /**
+     * Tampilkan daftar Kartu Keluarga dengan fitur pencarian, filter, dan sorting.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index(Request $request)
     {
         $query = KartuKeluarga::with(['rayon'])
             ->withCount('jemaats');
 
-        // Pencarian
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -25,18 +33,15 @@ class KartuKeluargaController extends Controller
             });
         }
 
-        // Filter ulang tahun pernikahan
         if ($request->filter == 'ulangtahunpernikahan') {
             $query->whereMonth('tanggal_pernikahan', now()->month)
                 ->whereYear('tanggal_pernikahan', '<=', now()->year);
         }
 
-        // Filter Rayon
         if ($request->filled('rayon_id')) {
             $query->where('rayon_id', $request->rayon_id);
         }
 
-        // Sorting
         $sortable = ['no_kk', 'kepala_keluarga', 'jemaats_count', 'tanggal_pernikahan'];
         $sortBy = in_array($request->sort_by, $sortable) ? $request->sort_by : 'created_at';
         $sortOrder = $request->sort_order === 'asc' ? 'asc' : 'desc';
@@ -50,6 +55,11 @@ class KartuKeluargaController extends Controller
         return view('kartu_keluarga.index', compact('kartuKeluargas', 'rayons'));
     }
 
+    /**
+     * Form pembuatan Kartu Keluarga.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create()
     {
         $rayons = Rayon::all();
@@ -68,12 +78,18 @@ class KartuKeluargaController extends Controller
         return view('kartu_keluarga.create', compact('rayons', 'provinces'));
     }
 
+    /**
+     * Simpan data Kartu Keluarga baru.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'rayon_id' => 'nullable|exists:rayons,id',
             'no_kk' => 'required|string|max:20|unique:kartu_keluargas,no_kk',
             'kepala_keluarga' => 'required|string|max:255',
-            'rayon_id' => 'required|exists:rayons,id',
             'provinsi_id' => 'nullable|exists:provinces,id',
             'kota_id' => 'nullable|exists:regencies,id',
             'kecamatan_id' => 'nullable|exists:districts,id',
@@ -82,7 +98,6 @@ class KartuKeluargaController extends Controller
             'alamat_rt' => 'nullable|integer|min:1|max:9999',
             'alamat_rw' => 'nullable|integer|min:1|max:9999',
             'alamat_lengkap' => 'nullable|string',
-            // 'tanggal_pernikahan' => 'nullable|date|before_or_equal:today',
         ]);
 
         $kartuKeluarga = KartuKeluarga::create($validated);
@@ -96,14 +111,16 @@ class KartuKeluargaController extends Controller
         return redirect()->route('jemaats.create')->with('success', 'Data Kartu Keluarga berhasil ditambahkan. Silahkan lanjutkan untuk menambah Jemaat');
     }
 
+    /**
+     * Tampilkan detail Kartu Keluarga.
+     *
+     * @param  \App\Models\KartuKeluarga  $kartuKeluarga
+     * @return \Illuminate\Contracts\View\View
+     */
     public function show(KartuKeluarga $kartuKeluarga)
     {
         $kartuKeluarga->load([
             'rayon',
-            // 'provinsi',
-            // 'kota',
-            // 'kecamatan',
-            // 'kelurahan',
             'jemaats' => function ($query) {
                 $query->orderBy('status_kk', 'desc')
                     ->orderBy('nama');
@@ -113,6 +130,12 @@ class KartuKeluargaController extends Controller
         return view('kartu_keluarga.show', compact('kartuKeluarga'));
     }
 
+    /**
+     * Form edit Kartu Keluarga.
+     *
+     * @param  \App\Models\KartuKeluarga  $kartuKeluarga
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit(KartuKeluarga $kartuKeluarga)
     {
         $rayons = Rayon::all();
@@ -131,6 +154,13 @@ class KartuKeluargaController extends Controller
         return view('kartu_keluarga.edit', compact('kartuKeluarga', 'rayons', 'provinces'));
     }
 
+    /**
+     * Perbarui data Kartu Keluarga.
+     *
+     * @param  \Illuminate\Http\Request     $request
+     * @param  \App\Models\KartuKeluarga    $kartuKeluarga
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, KartuKeluarga $kartuKeluarga)
     {
         $validated = $request->validate([
@@ -145,7 +175,6 @@ class KartuKeluargaController extends Controller
             'alamat_rt' => 'nullable|integer|min:1|max:9999',
             'alamat_rw' => 'nullable|integer|min:1|max:9999',
             'alamat_lengkap' => 'nullable|string',
-            // 'tanggal_pernikahan' => 'nullable|date|before_or_equal:today',
         ]);
 
         $kartuKeluarga->update($validated);
@@ -154,6 +183,12 @@ class KartuKeluargaController extends Controller
             ->with('success', 'Data kartu keluarga berhasil diperbarui');
     }
 
+    /**
+     * Hapus data Kartu Keluarga.
+     *
+     * @param  \App\Models\KartuKeluarga  $kartuKeluarga
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(KartuKeluarga $kartuKeluarga)
     {
         $kartuKeluarga->delete();
