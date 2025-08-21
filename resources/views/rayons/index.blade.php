@@ -29,7 +29,7 @@
             </select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="sort_order" class="form-label">Arah Urutan</label>
             <select name="sort_order" id="sort_order" class="form-select">
                 <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Naik (A-Z / Terendah)</option>
@@ -38,7 +38,7 @@
             </select>
         </div>
 
-        <div class="col-md-3 d-flex">
+        <div class="col-md-4 d-flex">
             <button type="submit" class="btn btn-primary me-2 w-100"><i class="bi bi-filter"></i> Tampilkan</button>
             <a href="{{ route('rayons.index') }}" class="btn btn-secondary w-100"><i class="bi bi-x-circle"></i> Reset</a>
         </div>

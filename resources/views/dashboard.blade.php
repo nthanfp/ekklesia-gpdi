@@ -10,7 +10,7 @@
             <div class="card border-start border-primary border-4">
                 <div class="card-header bg-white">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0 text-primary">
+                        <h5 class="card-title mb-0 small text-primary">
                             <i class="fas fa-user-tie me-2"></i>Kepala Keluarga
                         </h5>
                         <span class="badge bg-primary-light text-primary">+{{ $growthKK ?? 5 }}%</span>
@@ -18,7 +18,7 @@
                 </div>
                 <div class="card-body">
                     <div class="card-value">{{ number_format($totalKepalaKeluarga ?? 0) }}</div>
-                    <div class="card-detail">Total kepala keluarga</div>
+                    <div class="card-detail small">Total Kepala Keluarga</div>
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
             <div class="card border-start border-success border-4">
                 <div class="card-header bg-white">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0 text-success">
+                        <h5 class="card-title mb-0 small text-success">
                             <i class="fas fa-users me-2"></i>Jumlah Jemaat
                         </h5>
                         <span class="badge bg-success-light text-success">+{{ $growthJemaat ?? 12 }}%</span>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="card-body">
                     <div class="card-value">{{ number_format($totalJemaat) }}</div>
-                    <div class="card-detail">Total anggota jemaat</div>
+                    <div class="card-detail small">Total Anggota Jemaat</div>
                 </div>
             </div>
         </div>
@@ -45,13 +45,13 @@
         <div class="col-xl-3 col-md-6">
             <div class="card border-start border-info border-4">
                 <div class="card-header bg-white">
-                    <h5 class="card-title mb-0 text-info">
+                    <h5 class="card-title mb-0 small text-info">
                         <i class="fas fa-users-cog me-2"></i>Majelis
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="card-value">{{ number_format($totalMajelis ?? 0) }}</div>
-                    <div class="card-detail">Anggota majelis aktif</div>
+                    <div class="card-detail small">Anggota Majelis Aktif</div>
                     @if ($majelisUlangTahunCount ?? 0 > 0)
                         <div class="mt-2 text-info small">
                             <i class="fas fa-birthday-cake"></i>
@@ -66,13 +66,13 @@
         <div class="col-xl-3 col-md-6">
             <div class="card border-start border-danger border-4">
                 <div class="card-header bg-white">
-                    <h5 class="card-title mb-0 text-danger">
+                    <h5 class="card-title mb-0 small text-danger">
                         <i class="fas fa-ring me-2"></i>Ulang Tahun Pernikahan
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="card-value">{{ number_format($ulangTahunPernikahanBulanIniCount ?? 0) }}</div>
-                    <div class="card-detail">Ulang tahun Pernikahan bulan ini</div>
+                    <div class="card-detail small">Bulan {{ \Carbon\Carbon::now()->translatedFormat('F') }}</div>
                 </div>
             </div>
         </div>
@@ -82,13 +82,17 @@
     <div class="col-xl-3 col-md-6">
         <div class="card border-start border-danger border-4">
             <div class="card-header bg-white">
-                <h5 class="card-title mb-0 text-danger">
-                    <i class="fas fa-birthday0cake"></i>Ulang Tahun Pribadi
+                <h5 class="card-title mb-0 small text-danger">
+                    <i class="fas fa-birthday-cake"></i> Ulang Tahun Pribadi
                 </h5>
             </div>
             <div class="card-body">
                 <div class="card-value">{{ number_format($ulangTahunBulanIni ?? 0) }}</div>
-                <div class="card-detail">Ulang tahun Pribadi bulan ini</div>
+                <div class="card-detail small">
+                    <div class="card-detail small">
+                        Bulan {{ \Carbon\Carbon::now()->translatedFormat('F') }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

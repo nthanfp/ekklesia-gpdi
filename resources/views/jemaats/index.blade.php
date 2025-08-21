@@ -285,7 +285,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="12" class="text-center">Tidak ada data jemaat</td>
+                                <td colspan="14" class="text-center">Tidak ada data jemaat</td>
                             </tr>
                         @endforelse
                     </tbody>

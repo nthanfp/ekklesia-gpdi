@@ -33,8 +33,8 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-hash"></i></span>
                                     <input type="text" class="form-control @error('no_anggota') is-invalid @enderror"
-                                        id="no_anggota" name="no_anggota"
-                                        value="{{ old('no_anggota', $jemaat->no_anggota) }}" required>
+                                        id="no_anggota"
+                                        value="{{ old('no_anggota', $jemaat->no_anggota) }}" readonly>
                                 </div>
                                 @error('no_anggota')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>

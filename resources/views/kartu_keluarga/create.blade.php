@@ -13,11 +13,13 @@
                 <div class="row">
 
                     {{-- Rayon --}}
-                    <div class=" col-md-12 mb-3">
-                        <label for="rayon_id" class="form-label">Rayon <span class="text-danger">*</span></label>
+                    <div class="col-md-12 mb-3">
+                        <label for="rayon_id" class="form-label">Rayon</label>
                         <select name="rayon_id" id="rayon_id" class="form-select @error('rayon_id') is-invalid @enderror"
                             required>
                             <option value="">-- Pilih Rayon --</option>
+                            <option value="" {{ old('rayon_id') === null ? 'selected' : '' }}>-- Tidak Memiliki Rayon --
+                            </option>
                             @foreach ($rayons as $rayon)
                                 <option value="{{ $rayon->id }}" {{ old('rayon_id') == $rayon->id ? 'selected' : '' }}>
                                     {{ $rayon->nama }}

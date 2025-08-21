@@ -5,6 +5,22 @@
 @section('content')
     <div class="row">
 
+        @php
+            $lastKk = session('last_kk');
+            $kkId = old('kartu_keluarga_id', $lastKk['id'] ?? ($jemaat->kartu_keluarga_id ?? ''));
+            $kkDisplay = old(
+                'kartu_keluarga_display',
+                $lastKk
+                    ? $lastKk['no_kk'] . ' - ' . $lastKk['kepala_keluarga']
+                    : (isset($jemaat->kartuKeluarga)
+                        ? $jemaat->kartuKeluarga->no_kk . ' - ' . $jemaat->kartuKeluarga->kepala_keluarga
+                        : ''),
+            );
+            $defaultNama = old('nama', $jemaat->nama ?? ($lastKk['kepala_keluarga'] ?? ''));
+            $defaultStatusKk = old('status_kk', $jemaat->status_kk ?? ($lastKk ? 'KEPALA_KELUARGA' : ''));
+        @endphp
+
+
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -31,20 +47,6 @@
                         @endif
                         <div class="row g-3">
                             {{-- 🔹 INFORMASI PRIBADI --}}
-                            <div class="col-md-12">
-                                <label for="no_anggota" class="form-label">Nomor Anggota <span
-                                        class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                                    <input type="text" class="form-control @error('no_anggota') is-invalid @enderror"
-                                        id="no_anggota" name="no_anggota"
-                                        value="{{ old('no_anggota', $jemaat->no_anggota ?? '') }}" required>
-                                </div>
-                                @error('no_anggota')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                            </div>
-
                             <div class="col-md-6">
                                 <label for="nik" class="form-label">NIK <span class="text-danger">*</span></label>
                                 <div class="input-group">
@@ -63,8 +65,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
                                     <input type="text" class="form-control @error('nama') is-invalid @enderror"
-                                        id="nama" name="nama" value="{{ old('nama', $jemaat->nama ?? '') }}"
-                                        required>
+                                        id="nama" name="nama" value="{{ $defaultNama }}" required>
                                 </div>
                                 @error('nama')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -183,35 +184,11 @@
                                     @endphp
                                     <input type="text" id="kartu_keluarga_display" class="form-control" readonly
                                         placeholder="Pilih Kartu Keluarga" value="{{ $kkDisplay }}">
+                                    <input type="hidden" name="kartu_keluarga_id" id="kartu_keluarga_id"
+                                        value="{{ $kkId }}">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#kkModal">Pilih</button>
                                 </div>
-                                <input type="hidden" name="kartu_keluarga_id" id="kartu_keluarga_id"
-                                    value="{{ $kkId }}">
-                                {{-- <label for="kartu_keluarga_id" class="form-label">Kartu Keluarga</label>
-                                <select class="form-select @error('kartu_keluarga_id') is-invalid @enderror"
-                                    id="kartu_keluarga_id" name="kartu_keluarga_id">
-                                    <option value="">Pilih Kartu Keluarga</option>
-                                    @php
-                                        $grouped = $kartuKeluargas->groupBy(
-                                            fn($item) => $item->rayon->nama ?? 'Tanpa Rayon',
-                                        );
-                                    @endphp
-                                    @foreach ($grouped as $rayon => $items)
-                                        <optgroup label="{{ $rayon }}">
-                                            @foreach ($items as $kk)
-                                                <option value="{{ $kk->id }}"
-                                                    {{ old('kartu_keluarga_id', $jemaat->kartu_keluarga_id ?? '') == $kk->id ? 'selected' : '' }}
-                                                    data-tanggal-pernikahan="{{ optional($kk->tanggal_pernikahan)->format('Y-m-d') }}">
-                                                    {{ $kk->no_kk }} - {{ $kk->kepala_keluarga }}
-                                                </option>
-                                            @endforeach
-                                        </optgroup>
-                                    @endforeach
-                                </select>
-                                @error('kartu_keluarga_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror --}}
                             </div>
 
                             <div class="col-md-6">
@@ -222,7 +199,7 @@
                                     <option value="">Pilih Status</option>
                                     @foreach (\App\Models\Jemaat::STATUS_KK as $value => $label)
                                         <option value="{{ $value }}"
-                                            {{ old('status_kk', $jemaat->status_kk ?? '') == $value ? 'selected' : '' }}
+                                            {{ $defaultStatusKk === $value ? 'selected' : '' }}
                                             @if ($value === 'ANAK') data-is-anak="true" @endif>
                                             {{ $label }}
                                         </option>

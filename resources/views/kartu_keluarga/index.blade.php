@@ -94,7 +94,7 @@
                                 </td>
                                 <td>{{ $kk->no_kk }}</td>
                                 <td>{{ $kk->kepala_keluarga }}</td>
-                                <td>{{ $kk->rayon->nama }}</td>
+                                <td>{{ optional($kk->rayon)->nama ?? 'Tidak Memiliki Rayon' }}</td>
                                 <td class="text-center">
                                     <span class="badge bg-primary">{{ $kk->jemaats_count }}</span>
                                 </td>
@@ -122,12 +122,12 @@
                                             );
                                         @endphp
                                         <div class="d-flex align-items-center gap-2">
-                                            <i class="fas fa-ring text-danger"></i>
+                                            <i class="fas fa-ring text-danger small"></i>
                                             <div>
                                                 {{ $tanggalPernikahan->translatedFormat('d F Y') }}
                                                 <br>
-                                                <small class="text-muted">
-                                                    ({{ $tanggalPernikahan->diffInYears() }} tahun)
+                                                <small class="text-muted small">
+                                                    ({{ number_format($tanggalPernikahan->diffInDays() / 365, 2) }} tahun)
                                                 </small>
                                             </div>
                                         </div>
