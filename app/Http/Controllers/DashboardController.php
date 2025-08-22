@@ -49,7 +49,7 @@ class DashboardController extends Controller
 
         // Jemaat Terbaru
         $recentJemaats = Jemaat::with(['kartuKeluarga.rayon'])
-            ->latest()
+            ->latest('tanggal_gabung')
             ->take(5)
             ->get();
 

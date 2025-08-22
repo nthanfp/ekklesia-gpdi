@@ -132,7 +132,7 @@
                                     </span>
                                 </td>
                                 <td>{{ $jemaat->kartuKeluarga->rayon->nama ?? '-' }}</td>
-                                <td>{{ $jemaat->created_at->translatedFormat('d M Y') }}</td>
+                                <td>{{ $jemaat->tanggal_gabung ? $jemaat->tanggal_gabung->translatedFormat('d M Y') : '-' }}</td>
                             </tr>
                         @empty
                             <tr>

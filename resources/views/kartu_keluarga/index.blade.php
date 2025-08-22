@@ -127,7 +127,7 @@
                                                 {{ $tanggalPernikahan->translatedFormat('d F Y') }}
                                                 <br>
                                                 <small class="text-muted small">
-                                                    ({{ number_format($tanggalPernikahan->diffInDays() / 365, 2) }} tahun)
+                                                    ({{ number_format($tanggalPernikahan->diffInDays() / 365, 0) }} tahun)
                                                 </small>
                                             </div>
                                         </div>
